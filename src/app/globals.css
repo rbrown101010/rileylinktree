@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Vintage Apple rainbow (1977–1998 inspired) */
+  --apple-green: #79c753;
+  --apple-yellow: #f6bf00;
+  --apple-orange: #f39600;
+  --apple-red: #e14133;
+  --apple-purple: #7e479b;
+  --apple-blue: #2e77d0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-jp, var(--font-geist-sans));
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body { background: var(--background); color: var(--foreground); font-family: var(--font-jp, var(--font-geist-sans)), Arial, Helvetica, sans-serif; }
+
+/* Links with single-color highlight that grows on hover */
+.reveal-link {
+  position: relative;
+  display: inline-block;
+  color: #000; /* ensure black text by default */
+  z-index: 0; /* create stacking context so ::after sits behind text but above page */
+}
+
+.link-highlight {
+  position: relative;
+  display: inline-flex;
+  align-items: center; /* vertically center text within the highlight */
+  line-height: 1;
+  padding: .35rem .6rem;
+}
+.link-highlight::after {
+  content: "";
+  position: absolute;
+  inset: -.1rem -.35rem;
+  border-radius: 0; /* square corners */
+  background: var(--hl, var(--apple-green));
+  filter: saturate(1.25) contrast(1.05);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  transition: transform .35s cubic-bezier(.2,.9,.2,1), opacity .35s ease;
+  z-index: -1;
+}
+
+.reveal-link:hover::after,
+.reveal-link:focus-visible::after { transform: scaleX(1); opacity: 1; }
+
+/* Per-link highlight colors */
+.hl-green  { --hl: var(--apple-green); }
+.hl-yellow { --hl: var(--apple-yellow); }
+.hl-orange { --hl: var(--apple-orange); }
+.hl-red    { --hl: var(--apple-red); }
+.hl-purple { --hl: var(--apple-purple); }
+.hl-blue   { --hl: var(--apple-blue); }
+
+/* Optional white text on dark highlight */
+.reveal-link.hover-white:hover,
+.reveal-link.hover-white:focus-visible { color: #fff; }
+.reveal-link.hover-white:hover .label-nudge,
+.reveal-link.hover-white:focus-visible .label-nudge { color: #fff; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-link,
+  .retro-apple::after {
+    transition: none;
+  }
+}
+
+/* Tiny pop animation for status badges */
+@keyframes pop {
+  0% { transform: scale(.85); opacity: 0; }
+  50% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-pop { animation: pop .36s ease-out both; }
+
+@keyframes toastIn {
+  0% { transform: translate(-50%, 16px) scale(.96); opacity: 0; }
+  60% { transform: translate(-50%, 0) scale(1.02); opacity: 1; }
+  100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+}
+.animate-toast { animation: toastIn .35s cubic-bezier(.2,.9,.2,1) both; }
+
+/* Small typographic touches */
+.signature {
+  letter-spacing: .02em;
+}
+
+/* Slight upward nudge of link labels so they sit a touch higher */
+.label-nudge { position: relative; top: -1px; }
+
+/* Social icon hover/active animation */
+.icon-hover { position: relative; }
+/* Animate the inner SVG directly so growth is unmistakable */
+.icon-hover > svg {
+  transition: transform .28s cubic-bezier(.2,.9,.2,1), filter .2s ease;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.icon-hover:hover { z-index: 2; }
+.icon-hover:hover > svg { transform: rotate(12deg) scale(2.8); filter: saturate(1.1); }
+.icon-hover:active > svg { transform: rotate(8deg) scale(2.3); }
